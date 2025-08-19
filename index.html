@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Trade Model Hub</title>
+  <style>
+    :root {
+      --bg: #0d1117; --card: #161b22; --accent: #00bcd4;
+      --text: #c9d1d9; --green: #3fb950; --red: #f85149;
+    }
+    body{margin:0;font-family:Segoe UI;background:var(--bg);color:var(--text);line-height:1.6}
+    header{text-align:center;padding:2rem 1rem}
+    main{max-width:700px;margin:0 auto;padding:1rem}
+    select{background:var(--card);color:var(--text);border:1px solid var(--accent);padding:.5rem 1rem;border-radius:4px;font-size:1rem;margin-bottom:2rem}
+    #stats{background:var(--card);padding:1.5rem;border-radius:8px}
+    #metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1rem;margin:1rem 0}
+    .metric{background:rgba(255,255,255,.05);padding:.75rem;border-radius:6px;text-align:center}
+    .metric .value{font-size:1.4rem;font-weight:bold}
+    .metric .label{font-size:.8rem;opacity:.7}
+    .win{color:var(--green)} .loss{color:var(--red)}
+    #video{display:inline-block;margin-top:1rem;color:var(--accent)}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Trade Model Hub</h1>
+    <p>Compare back-tested swing & day-trading models</p>
+  </header>
+
+  <main>
+    <select id="model">
+      <option value="ict">Inner Circle Trading (ICT)</option>
+      <option value="vp">Volume Profile + VWAP</option>
+    </select>
+
+    <section id="stats">
+      <h2 id="model-name">ICT</h2>
+      <div id="metrics"></div>
+      <p id="rules"></p>
+      <a id="video" href="https://www.youtube.com/watch?v=K5KWg3wx1zY" target="_blank">Watch Strategy Video →</a>
+    </section>
+  </main>
+
+  <script>
+    const data = {
+      "ict": {
+        "name":"Inner Circle Trading (ICT)",
+        "winRate":63,
+        "avgRR":2.1,
+        "expectancy":0.74,
+        "bestMarket":"US Index Futures (ES, NQ)",
+        "rules":"Identify daily bias via Asian range & previous day high/low. Enter on London or NY session when price sweeps liquidity and aligns with OTE 62-79 % fib retracement. Target equal lows/highs or previous day high/low.",
+        "video":"https://www.youtube.com/watch?v=K5KWg3wx1zY"
+      },
+      "vp": {
+        "name":"Volume Profile + VWAP",
+        "winRate":58,
+        "avgRR":1.9,
+        "expectancy":0.62,
+        "bestMarket":"Liquid equities / micro futures",
+        "rules":"Wait for price to revisit high-volume node or VWAP (±1 σ). Confirm with delta divergence. Entry on 1-min reversal candle; stop behind node. Target next LVN or prior session VAH/VAL.",
+        "video":"https://www.youtube.com/watch?v=xHKQtS0tays"
+      }
+    };
+
+    const selector = document.getElementById('model');
+    const modelName = document.getElementById('model-name');
+    const metrics = document.getElementById('metrics');
+    const rules = document.getElementById('rules');
+    const video = document.getElementById('video');
+
+    function render(key){
+      const m = data[key];
+      modelName.textContent = m.name;
+      metrics.innerHTML = `
+        <div class="metric"><div class="value win">${m.winRate}%</div><div class="label">Win Rate</div></div>
+        <div class="metric"><div class="value">${m.avgRR}</div><div class="label">Avg R:R</div></div>
+        <div class="metric"><div class="value">${m.expectancy}</div><div class="label">Expectancy</div></div>
+        <div class="metric"><div class="value">${m.bestMarket}</div><div class="label">Best Market</div></div>`;
+      rules.textContent = m.rules;
+      video.href = m.video;
+    }
+
+    selector.addEventListener('change', e => render(e.target.value));
+    render('ict');
+  </script>
+</body>
+</html>
